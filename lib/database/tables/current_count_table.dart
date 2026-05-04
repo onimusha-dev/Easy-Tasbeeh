@@ -10,7 +10,11 @@ class CurrentCountTable extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 
   DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
   TextColumn get dhikrId => text().withDefault(const Constant('subhanallah'))();
+
   TextColumn get comboName => text().nullable()();
-  TextColumn get sessionMode => text().withDefault(const Constant('single'))(); // 'single' or 'combo'
+
+  TextColumn get sessionMode =>
+      text().withDefault(const Constant('single'))(); // 'single' or 'combo'
 }

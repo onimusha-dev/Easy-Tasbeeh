@@ -3,6 +3,11 @@ import 'package:flutter/material.dart' show ThemeMode;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'settings_state.dart';
 import '../../theme/theme.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final settingsServiceProvider = Provider<SettingsService>((ref) {
+  throw UnimplementedError('Override this in ProviderScope with SharedPreferences instance');
+});
 
 class SettingsService {
   final SharedPreferences prefs;

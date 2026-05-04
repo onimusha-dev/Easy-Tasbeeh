@@ -2,11 +2,11 @@ import 'package:easy_tasbeeh/core/models/dhikr_model.dart';
 import 'package:easy_tasbeeh/core/service/settings_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 
 final currentDhikrProvider = Provider<DhikrItem>((ref) {
   final settings = ref.watch(settingsProvider);
-  final countData = ref.watch(currentCountStreamProvider).value;
+  final countData = ref.watch(counterProvider).value;
 
   if (settings.activeComboIndex >= 0 &&
       settings.activeComboIndex < settings.comboPresets.length &&

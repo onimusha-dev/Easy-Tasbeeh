@@ -3,7 +3,6 @@ import 'package:easy_tasbeeh/core/service/settings_provider.dart';
 import 'package:easy_tasbeeh/database/dao/count_history_dao.dart';
 import 'package:easy_tasbeeh/database/dao/current_count_dao.dart';
 import 'package:easy_tasbeeh/database/db.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'count_repository.g.dart';
@@ -14,24 +13,6 @@ CountRepository countRepository(Ref ref) {
   final countHistoryDao = ref.watch(countHistoryDaoProvider);
   return CountRepository(ref, currentCountDao, countHistoryDao);
 }
-
-final currentCountStreamProvider = StreamProvider<CurrentCountTableData?>((
-  ref,
-) {
-  final settings = ref.watch(settingsProvider);
-  final sessionId = settings.activeComboIndex >= 0
-      ? sessionIdCombo
-      : sessionIdSingle;
-  return ref.watch(countRepositoryProvider).watchCountById(sessionId);
-});
-
-final singleCountStreamProvider = StreamProvider<CurrentCountTableData?>((ref) {
-  return ref.watch(countRepositoryProvider).watchCountById(sessionIdSingle);
-});
-
-final comboCountStreamProvider = StreamProvider<CurrentCountTableData?>((ref) {
-  return ref.watch(countRepositoryProvider).watchCountById(sessionIdCombo);
-});
 
 const int sessionIdSingle = 1;
 const int sessionIdCombo = 2;
@@ -81,11 +62,6 @@ class CountRepository {
     }
 
     return session;
-  }
-
-  // Watch the current count for reactive UI, respecting the active mode
-  Stream<CurrentCountTableData?> watchCurrentCount(int sessionId) {
-    return _currentCountDao.watchCountById(sessionId);
   }
 
   // Increment the counter and update the database
@@ -261,6 +237,15 @@ class CountRepository {
       return true;
     }
     return false;
+  }
+  // Delete all history records
+  Future<void> deleteAllHistory() async {
+    await _countHistoryDao.deleteAll();
+  }
+
+  // Delete a specific history record
+  Future<void> deleteHistoryById(int id) async {
+    await _countHistoryDao.deleteById(id);
   }
 }
 

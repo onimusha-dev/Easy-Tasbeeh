@@ -1,6 +1,6 @@
 import 'package:easy_tasbeeh/core/theme/theme.dart';
 import 'package:easy_tasbeeh/core/widgets/premium_dialog.dart';
-import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +28,7 @@ class SaveProgressDialog extends ConsumerWidget {
       confirmLabel: confirmLabel,
       color: Theme.of(context).extension<AppColors>()?.destructiveColor,
       onConfirm: () {
-        ref.read(countRepositoryProvider).saveAndReset();
+        ref.read(counterProvider.notifier).saveAndReset();
         onConfirm();
       },
     );

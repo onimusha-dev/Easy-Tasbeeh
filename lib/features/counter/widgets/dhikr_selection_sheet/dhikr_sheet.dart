@@ -3,7 +3,7 @@ import 'package:easy_tasbeeh/core/models/dhikr_model.dart';
 import 'package:easy_tasbeeh/core/service/dhikr_service.dart';
 import 'package:easy_tasbeeh/core/service/settings_provider.dart';
 import 'package:easy_tasbeeh/core/widgets/save_progress_dialog.dart';
-import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/dhikr_selection_sheet/dhikr_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,8 +16,8 @@ class DhikrSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentDhikr = ref.watch(currentDhikrProvider);
-    final countAsync = ref.watch(currentCountStreamProvider);
-    final currentCount = countAsync.asData?.value?.currentCount ?? 0;
+    final countAsync = ref.watch(counterProvider);
+    final currentCount = countAsync.value?.currentCount ?? 0;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -92,7 +92,7 @@ class DhikrSheet extends ConsumerWidget {
                       return;
                     }
 
-                    final repo = ref.read(countRepositoryProvider);
+                    final notifier = ref.read(counterProvider.notifier);
 
                     if (currentCount > 0) {
                       SaveProgressDialog.show(
@@ -105,7 +105,7 @@ class DhikrSheet extends ConsumerWidget {
                           ref
                               .read(settingsProvider.notifier)
                               .setLastDhikrId(item.id);
-                          repo.setDhikrId(item.id, sessionId: sessionId);
+                          notifier.setDhikrId(item.id, sessionId: sessionId);
                           Navigator.pop(context); // Close bottom sheet
                         },
                       );
@@ -113,7 +113,7 @@ class DhikrSheet extends ConsumerWidget {
                       ref
                           .read(settingsProvider.notifier)
                           .setLastDhikrId(item.id);
-                      repo.setDhikrId(item.id, sessionId: sessionId);
+                      notifier.setDhikrId(item.id, sessionId: sessionId);
                       Navigator.pop(context); // Close bottom sheet
                     }
                   },

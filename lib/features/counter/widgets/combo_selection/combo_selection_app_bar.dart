@@ -1,5 +1,5 @@
 import 'package:easy_tasbeeh/core/widgets/premium_dialog.dart';
-import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,8 +12,8 @@ class ComboSelectionAppBar extends ConsumerWidget
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final countAsync = ref.watch(currentCountStreamProvider);
-    final currentCount = countAsync.asData?.value?.currentCount ?? 0;
+    final countAsync = ref.watch(counterProvider);
+    final currentCount = countAsync.value?.currentCount ?? 0;
 
     return AppBar(
       title: Text(
@@ -51,7 +51,7 @@ class ComboSelectionAppBar extends ConsumerWidget
         confirmLabel: 'Restore',
         onConfirm: () async {
           final success = await ref
-              .read(countRepositoryProvider)
+              .read(counterProvider.notifier)
               .restoreLastSession();
           if (context.mounted) {
             _showRestoreResult(context, success);

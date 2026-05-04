@@ -3,6 +3,7 @@ import 'package:easy_tasbeeh/core/service/settings_provider.dart';
 import 'package:easy_tasbeeh/core/widgets/premium_dialog.dart';
 import 'package:easy_tasbeeh/database/db.dart';
 import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/counter_app_bar.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/counter_background.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/counter_layout.dart';
@@ -26,7 +27,7 @@ class _CounterScreenState extends ConsumerState<CounterScreen> {
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
-    final countAsync = ref.watch(currentCountStreamProvider);
+    final countAsync = ref.watch(counterProvider);
 
     return PopScope(
       canPop: false,
@@ -93,18 +94,18 @@ class _CounterScreenState extends ConsumerState<CounterScreen> {
 
     final nextCount = (countData?.currentCount ?? 0) + 1;
     final target = countData?.targetCount ?? 0;
-    final isTargetReached = target > 0 && nextCount >= target;
+    final targetReachedLocally = target > 0 && nextCount >= target;
 
-    if (!isTargetReached) {
+    if (!targetReachedLocally) {
       Future.delayed(const Duration(milliseconds: 100), () {
         if (mounted) setState(() => _isFrozen = false);
       });
     }
 
-    final repo = ref.read(countRepositoryProvider);
+    final notifier = ref.read(counterProvider.notifier);
     final settings = ref.read(settingsProvider);
 
-    await repo.increment();
+    final isTargetReached = await notifier.increment();
 
     // 1. Combo Segment Milestone Vibration
     if (settings.activeComboIndex >= 0 &&
@@ -138,10 +139,8 @@ class _CounterScreenState extends ConsumerState<CounterScreen> {
     }
 
     // 3. Final Target Reached
-    if (target > 0 && nextCount >= target) {
+    if (isTargetReached) {
       if (mounted) {
-        await repo.saveAndReset();
-        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Target reached! Session saved to history.'),

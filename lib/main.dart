@@ -2,7 +2,6 @@ import 'package:easy_tasbeeh/core/service/backup_service.dart';
 import 'package:easy_tasbeeh/core/service/notification_service.dart';
 import 'package:easy_tasbeeh/core/service/package_info_provider.dart';
 import 'package:easy_tasbeeh/core/service/settings/reminder_manager.dart';
-import 'package:easy_tasbeeh/core/service/settings/settings_service.dart';
 import 'package:easy_tasbeeh/core/service/settings_provider.dart';
 import 'package:easy_tasbeeh/core/service/shared_preferences.dart';
 import 'package:easy_tasbeeh/core/theme/theme.dart';

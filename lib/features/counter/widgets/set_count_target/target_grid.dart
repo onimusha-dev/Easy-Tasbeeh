@@ -1,5 +1,5 @@
 import 'package:easy_tasbeeh/core/widgets/save_progress_dialog.dart';
-import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -49,7 +49,7 @@ class TargetGrid extends ConsumerWidget {
                 onSelected!(target);
                 return;
               }
-              final repo = ref.read(countRepositoryProvider);
+              final notifier = ref.read(counterProvider.notifier);
               final currentCount =
                   (countAsync.value as dynamic)?.currentCount ?? 0;
 
@@ -61,12 +61,12 @@ class TargetGrid extends ConsumerWidget {
                       'This will save your current progress to history.',
                   confirmLabel: 'Archive',
                   onConfirm: () {
-                    repo.setTarget(target, sessionId: sessionId);
+                    notifier.setTarget(target, sessionId: sessionId);
                     Navigator.pop(context); // Close bottom sheet
                   },
                 );
               } else {
-                repo.setTarget(target, sessionId: sessionId);
+                notifier.setTarget(target, sessionId: sessionId);
                 Navigator.pop(context); // Close bottom sheet
               }
             },

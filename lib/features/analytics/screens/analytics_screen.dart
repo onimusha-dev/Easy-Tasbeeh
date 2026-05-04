@@ -1,8 +1,8 @@
 import 'package:easy_tasbeeh/core/theme/app_layout.dart';
 import 'package:easy_tasbeeh/database/db.dart';
-import 'package:easy_tasbeeh/database/repository/count_repository.dart';
 import 'package:easy_tasbeeh/features/analytics/widgets/activity_heatmap.dart';
 import 'package:easy_tasbeeh/features/analytics/widgets/weekly_activity_bar.dart';
+import 'package:easy_tasbeeh/features/history/providers/history_provider.dart';
 import 'package:easy_tasbeeh/features/history/screens/history_screen.dart';
 import 'package:easy_tasbeeh/features/history/widgets/history_item_card.dart';
 import 'package:easy_tasbeeh/features/settings/widgets/settings_tiles.dart';
@@ -15,7 +15,7 @@ class AnalyticsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final historyAsync = ref.watch(countRepositoryProvider).watchAllHistory();
+    final historyAsync = ref.watch(historyProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -24,14 +24,8 @@ class AnalyticsScreen extends ConsumerWidget {
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
-      body: StreamBuilder<List<CountHistoryTableData>>(
-        stream: historyAsync,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final history = snapshot.data!;
+      body: historyAsync.when(
+        data: (history) {
           if (history.isEmpty) {
             return const _EmptyAnalyticsView();
           }
@@ -81,6 +75,8 @@ class AnalyticsScreen extends ConsumerWidget {
             ],
           );
         },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text('Error: $err')),
       ),
     );
   }

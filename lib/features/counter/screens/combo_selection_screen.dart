@@ -2,7 +2,7 @@ import 'package:easy_tasbeeh/core/service/settings_provider.dart';
 import 'package:easy_tasbeeh/core/theme/app_layout.dart';
 import 'package:easy_tasbeeh/core/widgets/app_section.dart';
 import 'package:easy_tasbeeh/core/widgets/premium_dialog.dart';
-import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/combo_selection/combo_preset_card.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/combo_selection/combo_selection_app_bar.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/combo_selection/empty_presets_state.dart';
@@ -95,7 +95,7 @@ class ComboSelectionScreen extends ConsumerWidget {
     final settings = ref.read(settingsProvider);
     if (settings.activeComboIndex == newIndex) return;
 
-    final countData = ref.read(currentCountStreamProvider).asData?.value;
+    final countData = ref.read(counterProvider).value;
     final hasProgress = (countData?.currentCount ?? 0) > 0;
 
     showDialog(

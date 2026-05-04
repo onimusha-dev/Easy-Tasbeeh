@@ -1,36 +1,19 @@
-import 'package:easy_tasbeeh/core/models/dhikr_model.dart';
 import 'package:easy_tasbeeh/core/widgets/empty_state.dart';
 import 'package:easy_tasbeeh/core/widgets/search_field.dart';
 import 'package:easy_tasbeeh/features/learning/dhikr/widgets/dhikr_tile.dart';
+import 'package:easy_tasbeeh/features/learning/providers/learning_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LearnDhikrScreen extends StatefulWidget {
+class LearnDhikrScreen extends ConsumerStatefulWidget {
   const LearnDhikrScreen({super.key});
 
   @override
-  State<LearnDhikrScreen> createState() => _LearnDhikrScreenState();
+  ConsumerState<LearnDhikrScreen> createState() => _LearnDhikrScreenState();
 }
 
-class _LearnDhikrScreenState extends State<LearnDhikrScreen> {
+class _LearnDhikrScreenState extends ConsumerState<LearnDhikrScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<DhikrItem> _filteredDhikrs = dhikrList;
-
-  void _filterDhikrs(String query) {
-    setState(() {
-      _filteredDhikrs = dhikrList
-          .where(
-            (item) =>
-                item.transliteration.toLowerCase().contains(
-                  query.toLowerCase(),
-                ) ||
-                item.translation.toLowerCase().contains(query.toLowerCase()) ||
-                item.arabic.contains(query) ||
-                (item.category?.toLowerCase().contains(query.toLowerCase()) ??
-                    false),
-          )
-          .toList();
-    });
-  }
 
   @override
   void dispose() {
@@ -42,6 +25,7 @@ class _LearnDhikrScreenState extends State<LearnDhikrScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final learningState = ref.watch(learningProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -52,7 +36,7 @@ class _LearnDhikrScreenState extends State<LearnDhikrScreen> {
       body: Stack(
         children: [
           // The List (scrolls behind the search bar)
-          _filteredDhikrs.isEmpty
+          learningState.dhikrs.isEmpty
               ? const Center(
                   child: EmptyState(
                     icon: Icons.search_off_rounded,
@@ -61,12 +45,12 @@ class _LearnDhikrScreenState extends State<LearnDhikrScreen> {
                 )
               : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(16, 80, 16, 40),
-                  itemCount: _filteredDhikrs.length,
+                  itemCount: learningState.dhikrs.length,
                   itemBuilder: (context, index) {
                     return DhikrTile(
-                      item: _filteredDhikrs[index],
+                      item: learningState.dhikrs[index],
                       index: index + 1,
-                      isLast: index == _filteredDhikrs.length - 1,
+                      isLast: index == learningState.dhikrs.length - 1,
                     );
                   },
                 ),
@@ -81,10 +65,10 @@ class _LearnDhikrScreenState extends State<LearnDhikrScreen> {
               child: SearchField(
                 controller: _searchController,
                 hintText: 'Search dhikr...',
-                onChanged: _filterDhikrs,
+                onChanged: (query) => ref.read(learningProvider.notifier).filter(query),
                 onClear: () {
                   _searchController.clear();
-                  _filterDhikrs('');
+                  ref.read(learningProvider.notifier).clearSearch();
                 },
               ),
             ),

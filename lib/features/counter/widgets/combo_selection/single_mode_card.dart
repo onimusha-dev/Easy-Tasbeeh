@@ -3,6 +3,7 @@ import 'package:easy_tasbeeh/core/service/settings_provider.dart';
 import 'package:easy_tasbeeh/core/theme/app_layout.dart';
 import 'package:easy_tasbeeh/core/theme/app_typography.dart';
 import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/dhikr_selection_sheet/dhikr_sheet.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/set_count_target/target_goal_sheet.dart';
 import 'package:flutter/material.dart';
@@ -28,8 +29,8 @@ class SingleModeCard extends ConsumerWidget {
       (d) => d.id == settings.lastDhikrId,
       orElse: () => dhikrList.first,
     );
-    final countAsync = ref.watch(singleCountStreamProvider);
-    final currentTarget = countAsync.asData?.value?.targetCount ?? 0;
+    final countAsync = ref.watch(counterProvider);
+    final currentTarget = countAsync.value?.targetCount ?? 0;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppLayout.spaceTileGap),
