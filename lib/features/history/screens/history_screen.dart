@@ -1,8 +1,8 @@
 import 'package:easy_tasbeeh/core/theme/app_layout.dart';
 import 'package:collection/collection.dart';
 import 'package:easy_tasbeeh/core/widgets/premium_dialog.dart';
-import 'package:easy_tasbeeh/database/dao/count_history_dao.dart';
-import 'package:easy_tasbeeh/database/db.dart';
+import 'package:easy_tasbeeh/core/models/counter_models.dart';
+import 'package:easy_tasbeeh/features/history/providers/history_provider.dart';
 import 'package:easy_tasbeeh/features/history/widgets/empty_history_view.dart';
 import 'package:easy_tasbeeh/features/history/widgets/history_item_card.dart';
 import 'package:easy_tasbeeh/features/history/widgets/history_totals_card.dart';
@@ -23,6 +23,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final historyAsync = ref.watch(historyProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -38,15 +40,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           const SizedBox(width: 8),
         ],
       ),
-      body: StreamBuilder<List<CountHistoryTableData>>(
-        stream: ref.watch(countHistoryDaoProvider).watchAllHistory(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final rawHistoryList = snapshot.data ?? [];
-
+      body: historyAsync.when(
+        data: (rawHistoryList) {
           if (rawHistoryList.isEmpty) {
             return const EmptyHistoryView();
           }
@@ -58,7 +53,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           }).toList();
 
           // Group by date
-          final grouped = groupBy(historyList, (CountHistoryTableData data) {
+          final grouped = groupBy(historyList, (HistoryRecord data) {
             return DateFormat('yyyy-MM-dd').format(data.createdAt);
           });
 
@@ -159,6 +154,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             ],
           );
         },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) => Center(child: Text('Error: $err')),
       ),
     );
   }
@@ -175,7 +172,7 @@ void _clearHistory(BuildContext context, WidgetRef ref) {
       confirmLabel: 'CLEAR ALL',
       color: Theme.of(context).colorScheme.error,
       onConfirm: () {
-        ref.read(countHistoryDaoProvider).deleteAll();
+        ref.read(historyProvider.notifier).clearAll();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('History cleared'),

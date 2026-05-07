@@ -1,5 +1,5 @@
 import 'package:easy_tasbeeh/core/widgets/premium_dialog.dart';
-import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,8 +12,12 @@ class ComboSelectionAppBar extends ConsumerWidget
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final countAsync = ref.watch(currentCountStreamProvider);
-    final currentCount = countAsync.asData?.value?.currentCount ?? 0;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final countAsync = ref.watch(counterProvider);
+    final currentCount = countAsync.value?.currentCount ?? 0;
+
+    final canRestore = ref.watch(canRestoreProvider).value ?? false;
 
     return AppBar(
       title: Text(
@@ -26,14 +30,33 @@ class ComboSelectionAppBar extends ConsumerWidget
       backgroundColor: Colors.transparent,
       elevation: 0,
       actions: [
-        AnimatedOpacity(
-          duration: const Duration(milliseconds: 300),
-          opacity: currentCount > 0 ? 0.3 : 1.0,
-          child: IconButton(
-            onPressed: currentCount > 0 ? null : () => _handleRestore(context, ref),
-            icon: const Icon(Icons.restore_rounded),
-            tooltip: 'Restore Last Session',
+        IconButton(
+          onPressed: () {
+            if (currentCount > 0) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Cannot restore with active progress'),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            } else if (!canRestore) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('No session to restore'),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            } else {
+              _handleRestore(context, ref);
+            }
+          },
+          icon: Icon(
+            Icons.restore_rounded,
+            color: (currentCount > 0 || !canRestore)
+                ? colorScheme.outline.withValues(alpha: 0.5)
+                : colorScheme.primary,
           ),
+          tooltip: 'Restore Last Session',
         ),
         const SizedBox(width: 8),
       ],
@@ -51,7 +74,7 @@ class ComboSelectionAppBar extends ConsumerWidget
         confirmLabel: 'Restore',
         onConfirm: () async {
           final success = await ref
-              .read(countRepositoryProvider)
+              .read(counterProvider.notifier)
               .restoreLastSession();
           if (context.mounted) {
             _showRestoreResult(context, success);

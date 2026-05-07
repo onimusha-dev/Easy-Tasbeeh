@@ -1,5 +1,5 @@
 import 'package:easy_tasbeeh/core/theme/app_layout.dart';
-import 'package:easy_tasbeeh/database/repository/count_repository.dart';
+import 'package:easy_tasbeeh/features/counter/providers/counter_provider.dart';
 import 'package:easy_tasbeeh/features/counter/widgets/set_count_target/target_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,7 +21,7 @@ class TargetGoalSheet extends ConsumerWidget {
     final List<int> targets = [10, 33, 100, 300, 500];
     final colorScheme = Theme.of(context).colorScheme;
 
-    final countAsync = ref.watch(currentCountStreamProvider);
+    final countAsync = ref.watch(counterProvider);
     final currentTarget = countAsync.when(
       data: (data) => data?.targetCount ?? 0,
       loading: () => -1,
