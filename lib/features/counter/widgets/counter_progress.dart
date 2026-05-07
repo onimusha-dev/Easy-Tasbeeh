@@ -22,6 +22,11 @@ class CounterProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool hasTarget = targetCount > 0;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final secondaryTextColor = isDark
+        ? Colors.white.withValues(alpha: 0.6)
+        : Colors.black54;
 
     return Padding(
       padding: const EdgeInsets.only(left: 8),
@@ -40,21 +45,15 @@ class CounterProgress extends StatelessWidget {
                   Text(
                     '$currentCountData',
                     style: textTheme.headlineLarge?.copyWith(
-                      color: Colors.white,
-                      shadows: [
-                        Shadow(
-                          blurRadius: 8,
-                          color: Colors.black.withValues(alpha: 0.5),
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
+                      color: textColor,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                   if (hasTarget)
                     Text(
                       ' / $targetCount',
                       style: textTheme.labelLarge?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.5),
+                        color: secondaryTextColor,
                       ),
                     ),
                 ],
@@ -68,7 +67,8 @@ class CounterProgress extends StatelessWidget {
                 Text(
                   'ENDLESS',
                   style: textTheme.labelSmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: secondaryTextColor,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
             ],
@@ -85,7 +85,9 @@ class CounterProgress extends StatelessWidget {
               height: 4,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.15)
+                    : const Color(0xFFDCE2DC), // Gray greenish
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -132,15 +134,15 @@ class CounterProgress extends StatelessWidget {
               color: isCompleted
                   ? Colors.greenAccent.withValues(alpha: 0.2)
                   : (isActive
-                      ? colorScheme.primary.withValues(alpha: 0.2)
-                      : Colors.white.withValues(alpha: 0.05)),
+                        ? colorScheme.primary.withValues(alpha: 0.2)
+                        : Colors.white.withValues(alpha: 0.05)),
               shape: BoxShape.circle,
               border: Border.all(
                 color: isCompleted
                     ? Colors.greenAccent.withValues(alpha: 0.5)
                     : (isActive
-                        ? colorScheme.primary.withValues(alpha: 0.5)
-                        : Colors.white.withValues(alpha: 0.1)),
+                          ? colorScheme.primary.withValues(alpha: 0.5)
+                          : Colors.white.withValues(alpha: 0.1)),
                 width: 1,
               ),
             ),
@@ -150,8 +152,8 @@ class CounterProgress extends StatelessWidget {
               color: isCompleted
                   ? Colors.greenAccent
                   : (isActive
-                      ? colorScheme.primary
-                      : Colors.white.withValues(alpha: 0.2)),
+                        ? colorScheme.primary
+                        : Colors.white.withValues(alpha: 0.2)),
             ),
           ),
         );
@@ -175,6 +177,8 @@ class _AnimatedProgressBar extends StatelessWidget {
   Widget build(BuildContext context) {
     const double thumbSize = 16.0;
     const double thumbRadius = thumbSize / 2;
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: progress.clamp(0.0, 1.0)),
@@ -201,7 +205,9 @@ class _AnimatedProgressBar extends StatelessWidget {
                     child: Container(
                       height: 8,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.15)
+                            : const Color(0xFFDCE2DC), // Gray greenish
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
