@@ -27,16 +27,16 @@ class AppearanceScreen extends ConsumerWidget {
             context,
             title: 'Theme & Colors',
             children: [
-              buildSettingTile(
-                context,
-                icon: Icons.color_lens_outlined,
-                title: 'Accent colour',
-                subtitle: 'Choose your app\'s color scheme',
-                iconColor: AppIconColors.pink(context),
-                trailing: const _ColourDot(),
-                onTap: () => ColorSchemeSheet.show(context),
-                showChevron: false,
-              ),
+              // buildSettingTile(
+              //   context,
+              //   icon: Icons.color_lens_outlined,
+              //   title: 'Accent colour',
+              //   subtitle: 'Choose your app\'s color scheme',
+              //   iconColor: AppIconColors.pink(context),
+              //   trailing: const _ColourDot(),
+              //   onTap: () => ColorSchemeSheet.show(context),
+              //   showChevron: false,
+              // ),
               buildSettingTile(
                 context,
                 icon: Icons.brightness_6_outlined,

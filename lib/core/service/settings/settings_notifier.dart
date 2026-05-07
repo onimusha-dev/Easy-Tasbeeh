@@ -1,13 +1,14 @@
+import 'package:easy_tasbeeh/core/theme/theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'settings_state.dart';
-import 'settings_service.dart';
 import 'mixins/appearance_settings_mixin.dart';
-import 'mixins/feedback_settings_mixin.dart';
-import 'mixins/dhikr_settings_mixin.dart';
-import 'mixins/reminder_settings_mixin.dart';
 import 'mixins/backup_settings_mixin.dart';
+import 'mixins/dhikr_settings_mixin.dart';
+import 'mixins/feedback_settings_mixin.dart';
+import 'mixins/reminder_settings_mixin.dart';
+import 'settings_service.dart';
+import 'settings_state.dart';
 
 class SettingsNotifier extends Notifier<SettingsState>
     with
@@ -16,7 +17,6 @@ class SettingsNotifier extends Notifier<SettingsState>
         DhikrSettingsMixin,
         ReminderSettingsMixin,
         BackupSettingsMixin {
-  
   @override
   SettingsState build() {
     final service = ref.watch(settingsServiceProvider);
@@ -26,7 +26,12 @@ class SettingsNotifier extends Notifier<SettingsState>
       syncPresetsFromDb();
     });
 
-    return service.loadSettings();
+    final settings = service.loadSettings();
+    return settings.copyWith(
+      appearance: settings.appearance.copyWith(
+        colorScheme: AppColorScheme.sage,
+      ),
+    );
   }
 
   Future<void> refreshPermissionStatus() async {
