@@ -3,7 +3,6 @@ import 'package:easy_tasbeeh/core/theme/theme.dart';
 import 'package:easy_tasbeeh/core/widgets/app_switch.dart';
 import 'package:easy_tasbeeh/features/settings/screens/appearance/bg_changer_preview_screen.dart';
 import 'package:easy_tasbeeh/features/settings/screens/appearance/press_btn_changer_preview_screen.dart';
-import 'package:easy_tasbeeh/features/settings/widgets/color_scheme_sheet.dart';
 import 'package:easy_tasbeeh/features/settings/widgets/settings_tiles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -151,6 +150,7 @@ class AppearanceScreen extends ConsumerWidget {
   }
 }
 
+// ignore: unused_element
 class _ColourDot extends StatelessWidget {
   const _ColourDot();
   @override

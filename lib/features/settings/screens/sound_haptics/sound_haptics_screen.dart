@@ -1,6 +1,6 @@
 import 'package:easy_tasbeeh/core/service/settings_provider.dart';
-import 'package:easy_tasbeeh/core/widgets/app_switch.dart';
 import 'package:easy_tasbeeh/core/theme/theme.dart';
+import 'package:easy_tasbeeh/core/widgets/app_switch.dart';
 import 'package:easy_tasbeeh/features/settings/widgets/setting_chip.dart';
 import 'package:easy_tasbeeh/features/settings/widgets/settings_tiles.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +10,19 @@ import 'package:vibration/vibration.dart';
 
 class SoundHapticsScreen extends ConsumerWidget {
   const SoundHapticsScreen({super.key});
+
+  void _safeVibrate({int? duration, VoidCallback? hapticAction}) {
+    try {
+      if (hapticAction != null) {
+        hapticAction();
+      }
+      if (duration != null) {
+        Vibration.vibrate(duration: duration);
+      }
+    } catch (e) {
+      debugPrint('Vibration failed: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,6 +40,7 @@ class SoundHapticsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          /*
           // ── Sound Section ────────────────────────────────────────────────
           buildSettingsGroup(
             context,
@@ -56,6 +70,7 @@ class SoundHapticsScreen extends ConsumerWidget {
               ),
             ],
           ),
+          */
 
           // ── Haptics Section ──────────────────────────────────────────────
           buildSettingsGroup(
@@ -73,8 +88,10 @@ class SoundHapticsScreen extends ConsumerWidget {
                   onChanged: (v) {
                     notifier.toggleHaptic(v);
                     if (v) {
-                      HapticFeedback.selectionClick();
-                      Vibration.vibrate(duration: 20);
+                      _safeVibrate(
+                        duration: 10,
+                        hapticAction: HapticFeedback.selectionClick,
+                      );
                     }
                   },
                 ),
@@ -193,9 +210,10 @@ class SoundHapticsScreen extends ConsumerWidget {
           onChanged: (v) {
             if (v != null) {
               notifier.setMilestoneValue(v);
-              // Preview haptic + vibration
-              HapticFeedback.mediumImpact();
-              Vibration.vibrate(duration: 60);
+              _safeVibrate(
+                duration: 30,
+                hapticAction: HapticFeedback.mediumImpact,
+              );
             }
             Navigator.pop(context);
           },
@@ -214,5 +232,3 @@ class SoundHapticsScreen extends ConsumerWidget {
     );
   }
 }
-
-

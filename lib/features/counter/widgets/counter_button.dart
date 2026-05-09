@@ -8,8 +8,14 @@ import 'package:vibration/vibration.dart';
 class CounterButton extends ConsumerStatefulWidget {
   final VoidCallback? onTap;
   final PressButtonStyle? previewStyle;
+  final bool isEnabled;
 
-  const CounterButton({super.key, this.onTap, this.previewStyle});
+  const CounterButton({
+    super.key,
+    this.onTap,
+    this.previewStyle,
+    this.isEnabled = true,
+  });
 
   @override
   ConsumerState<CounterButton> createState() => _CounterButtonState();
@@ -36,7 +42,7 @@ class _CounterButtonState extends ConsumerState<CounterButton>
   }
 
   void _handleTapDown(TapDownDetails details) {
-    if (widget.onTap == null) return;
+    if (widget.onTap == null || !widget.isEnabled) return;
 
     final settings = ref.read(settingsProvider);
     final now = DateTime.now();
@@ -56,8 +62,8 @@ class _CounterButtonState extends ConsumerState<CounterButton>
 
     // Immediate Haptics for zero latency feel
     if (settings.hapticEnabled) {
-      HapticFeedback.mediumImpact();
-      Vibration.vibrate(duration: 25);
+      HapticFeedback.selectionClick();
+      Vibration.vibrate(duration: 10);
     }
 
     // Fire the actual tap callback

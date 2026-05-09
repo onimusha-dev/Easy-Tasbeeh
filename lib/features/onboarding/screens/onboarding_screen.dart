@@ -82,7 +82,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
                     height: 56,
@@ -201,7 +201,7 @@ class _OnboardingPage extends StatelessWidget {
             ),
           ),
           if (action != null) ...[const SizedBox(height: 40), action!],
-          const SizedBox(height: 100), // Space for bottom controls
+          const SizedBox(height: 130), // Space for bottom controls
         ],
       ),
     );

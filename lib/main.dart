@@ -37,7 +37,6 @@ void main() async {
   await Workmanager().initialize(callbackDispatcher);
   await NotificationService().init(); // Initialize notifications early
 
-
   // Only schedule periodic backup if the user has enabled it.
   final periodicEnabled = prefs.getBool('periodicBackupEnabled') ?? false;
   if (periodicEnabled && prefs.getString('backupDirectory') != null) {

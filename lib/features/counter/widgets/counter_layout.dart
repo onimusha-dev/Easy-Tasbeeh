@@ -13,6 +13,7 @@ class CounterLayout extends StatelessWidget {
   final double progress;
   final DhikrItem currentDhikr;
   final VoidCallback? onIncrement;
+  final bool isButtonEnabled;
 
   const CounterLayout({
     super.key,
@@ -22,6 +23,7 @@ class CounterLayout extends StatelessWidget {
     required this.progress,
     required this.currentDhikr,
     this.onIncrement,
+    this.isButtonEnabled = true,
   });
 
   @override
@@ -84,6 +86,7 @@ class CounterLayout extends StatelessWidget {
       child: CounterButton(
         onTap: onIncrement,
         previewStyle: settings.pressButtonStyle,
+        isEnabled: isButtonEnabled,
       ),
     );
   }
